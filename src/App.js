@@ -105,6 +105,7 @@ export default function App() {
     const allUpdated = [newRecord, ...stored].sort(
       (a, b) => b.timestamp - a.timestamp
     );
+
     const visibleUpdated = allUpdated.slice(0, MAX_VISIBLE);
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allUpdated));
@@ -129,6 +130,31 @@ export default function App() {
       localStorage.removeItem(STORAGE_KEY);
       setAllRecords([]);
       setRecords([]);
+    }
+  };
+
+  const regenerateRecords = () => {
+    if (
+      window.confirm(
+        "¿Seguro que quieres regenerar todos los registros con 150 datos aleatorios?"
+      )
+    ) {
+      const generated = [];
+      let currentDate = new Date();
+
+      for (let i = 0; i < 150; i += 1) {
+        generated.push(createFakeRecord(new Date(currentDate)));
+        const secondsBack = randomBetween(50, 300, 0);
+        currentDate = new Date(currentDate.getTime() - secondsBack * 1000);
+      }
+
+      const sortedGenerated = generated.sort((a, b) => b.timestamp - a.timestamp);
+      const visibleGenerated = sortedGenerated.slice(0, MAX_VISIBLE);
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedGenerated));
+      setAllRecords(sortedGenerated);
+      setRecords(visibleGenerated);
+      setTimeFilter("all");
     }
   };
 
@@ -168,7 +194,7 @@ export default function App() {
       style={{
         minHeight: "100vh",
         background: `linear-gradient(180deg, ${COLORS.headerBg} 0px, ${COLORS.pageBg} 190px)`,
-        padding: "92px 16px 40px",
+        padding: "96px 16px 40px",
         fontFamily: "Arial, sans-serif",
         color: COLORS.text,
       }}
@@ -190,7 +216,7 @@ export default function App() {
           style={{
             maxWidth: "1100px",
             margin: "0 auto",
-            padding: "12px 16px",
+            padding: "14px 16px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -200,13 +226,9 @@ export default function App() {
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <img
-              src="/logo-easyq.png"
+              src="https://www.easyq.es/wp-content/uploads/2020/07/logo-easyq.png"
               alt="EasyQ"
-              style={{
-                height: "34px",
-                width: "auto",
-                objectFit: "contain",
-              }}
+              style={{ height: "34px", width: "auto" }}
             />
             <div>
               <div
@@ -216,19 +238,13 @@ export default function App() {
                   fontWeight: 700,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
+                  marginBottom: "2px",
                 }}
               >
                 Production Monitoring
               </div>
-              <div
-                style={{
-                  fontWeight: 700,
-                  color: COLORS.primary,
-                  fontSize: "22px",
-                  lineHeight: 1.1,
-                }}
-              >
-                EasyBBot
+              <div style={{ fontSize: "20px", fontWeight: 700, color: COLORS.primary }}>
+                EasyBBot Dashboard
               </div>
             </div>
           </div>
@@ -253,14 +269,16 @@ export default function App() {
 
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
         <Card style={{ marginBottom: "20px", background: "rgba(255,255,255,0.96)" }}>
-          <h1 style={{ margin: 0, color: COLORS.primary, fontSize: "28px" }}>
-            Panel de control
-          </h1>
+          <div style={{ marginBottom: "6px", fontSize: "12px", color: COLORS.secondary, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+            Production Monitoring
+          </div>
+          <h1 style={{ margin: 0, color: COLORS.primary }}>Panel de control EasyBBot</h1>
           <p style={{ color: COLORS.muted, margin: "8px 0 0" }}>
-            Seguimiento de temperatura y registros operativos en tiempo real.
+            Control de temperatura y seguimiento de registros operativos.
           </p>
         </Card>
 
+        
         <div
           style={{
             display: "grid",
@@ -311,15 +329,9 @@ export default function App() {
                   key={option.key}
                   onClick={() => setTimeFilter(option.key)}
                   style={{
-                    background:
-                      timeFilter === option.key ? COLORS.primary : COLORS.headerBg,
-                    color:
-                      timeFilter === option.key ? "white" : COLORS.primary,
-                    border: `1px solid ${
-                      timeFilter === option.key
-                        ? COLORS.primary
-                        : COLORS.border
-                    }`,
+                    background: timeFilter === option.key ? COLORS.primary : COLORS.headerBg,
+                    color: timeFilter === option.key ? "white" : COLORS.primary,
+                    border: `1px solid ${timeFilter === option.key ? COLORS.primary : COLORS.border}`,
                     padding: "8px 12px",
                     borderRadius: "999px",
                     cursor: "pointer",
@@ -332,15 +344,11 @@ export default function App() {
               ))}
             </div>
           </div>
-
           <div style={{ width: "100%", height: 250 }}>
             <ResponsiveContainer>
               <LineChart data={chartData}>
                 <CartesianGrid stroke={COLORS.border} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="hora"
-                  tick={{ fill: COLORS.muted, fontSize: 12 }}
-                />
+                <XAxis dataKey="hora" tick={{ fill: COLORS.muted, fontSize: 12 }} />
                 <YAxis tick={{ fill: COLORS.muted, fontSize: 12 }} />
                 <Tooltip />
                 <Line
@@ -369,22 +377,10 @@ export default function App() {
             >
               <thead>
                 <tr style={{ background: COLORS.headerBg }}>
-                  <th
-                    style={{
-                      padding: "12px",
-                      textAlign: "left",
-                      color: COLORS.primary,
-                    }}
-                  >
+                  <th style={{ padding: "12px", textAlign: "left", color: COLORS.primary }}>
                     Fecha
                   </th>
-                  <th
-                    style={{
-                      padding: "12px",
-                      textAlign: "left",
-                      color: COLORS.primary,
-                    }}
-                  >
+                  <th style={{ padding: "12px", textAlign: "left", color: COLORS.primary }}>
                     Nombre
                   </th>
                   <th style={{ padding: "12px", color: COLORS.primary }}>ml</th>
@@ -423,18 +419,11 @@ export default function App() {
                       {r.mililitros}
                     </td>
                     <td style={{ padding: "12px", textAlign: "center" }}>
-                      <span
-                        style={{
-                          color: r.alerta ? COLORS.dangerText : COLORS.text,
-                          fontWeight: r.alerta ? 700 : 500,
-                        }}
-                      >
+                      <span style={{ color: r.alerta ? COLORS.dangerText : COLORS.text, fontWeight: r.alerta ? 700 : 500 }}>
                         {r.temperatura.toFixed(2)}
                       </span>
                       {r.alerta && (
-                        <span
-                          style={{ color: COLORS.dangerText, marginLeft: "6px" }}
-                        >
+                        <span style={{ color: COLORS.dangerText, marginLeft: "6px" }}>
                           ⚠️
                         </span>
                       )}
@@ -446,7 +435,36 @@ export default function App() {
           </div>
         </Card>
 
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+            gap: "12px",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            onClick={regenerateRecords}
+            title="Regenerar 150 registros"
+            style={{
+              background: COLORS.primary,
+              color: "white",
+              border: "none",
+              width: "46px",
+              height: "46px",
+              borderRadius: "12px",
+              cursor: "pointer",
+              fontWeight: 700,
+              fontSize: "20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ↻
+          </button>
+
           <button
             onClick={clearRecords}
             style={{
