@@ -129,29 +129,38 @@ export default function App() {
     }
   };
 
-  const regenerateRecords = () => {
-    if (
-      window.confirm(
-        "¿Seguro que quieres regenerar todos los registros con 150 datos aleatorios?"
-      )
-    ) {
-      const generated = [];
-      let currentDate = new Date();
+const regenerateRecords = () => {
+  if (
+    window.confirm(
+      "¿Seguro que quieres añadir 150 registros aleatorios al histórico actual?"
+    )
+  ) {
+    const generated = [];
+    let currentDate;
 
-      for (let i = 0; i < 150; i += 1) {
-        generated.push(createFakeRecord(new Date(currentDate)));
-        const secondsBack = randomBetween(50, 300, 0);
-        currentDate = new Date(currentDate.getTime() - secondsBack * 1000);
-      }
-
-      const sortedGenerated = generated.sort((a, b) => b.timestamp - a.timestamp);
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedGenerated));
-      setAllRecords(sortedGenerated);
-      setTimeFilter("all");
-      setPage(0);
+    if (allRecords.length > 0) {
+      const oldestTimestamp = Math.min(...allRecords.map((r) => r.timestamp));
+      currentDate = new Date(oldestTimestamp - randomBetween(50, 300, 0) * 1000);
+    } else {
+      currentDate = new Date();
     }
-  };
+
+    for (let i = 0; i < 150; i += 1) {
+      generated.push(createFakeRecord(new Date(currentDate)));
+      const secondsBack = randomBetween(50, 300, 0);
+      currentDate = new Date(currentDate.getTime() - secondsBack * 1000);
+    }
+
+    const mergedRecords = [...allRecords, ...generated].sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedRecords));
+    setAllRecords(mergedRecords);
+    setTimeFilter("all");
+    setPage(0);
+  }
+};
 
   const filteredRecords = useMemo(() => {
     const now = Date.now();
