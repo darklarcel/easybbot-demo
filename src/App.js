@@ -226,7 +226,7 @@ export default function App() {
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <img
-              src="https://www.easyq.es/wp-content/uploads/2020/07/logo-easyq.png"
+              src="public/logo-easyq.png"
               alt="EasyQ"
               style={{ height: "34px", width: "auto" }}
             />
