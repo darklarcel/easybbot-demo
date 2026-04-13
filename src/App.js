@@ -225,11 +225,15 @@ export default function App() {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <img
-              src="public/logo-easyq.png"
-              alt="EasyQ"
-              style={{ height: "34px", width: "auto" }}
-            />
+           <img
+                src="/logo-easyq.png"
+                alt="EasyQ"
+                style={{
+                  height: "34px",
+                  width: "auto",
+                  objectFit: "contain",
+                }}
+              />
             <div>
               <div
                 style={{
