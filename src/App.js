@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { Analytics } from "@vercel/analytics/react";
 
 const STORAGE_KEY = "easybbot-registros-demo";
 const ITEMS_PER_PAGE = 15;
@@ -585,6 +586,7 @@ const regenerateRecords = () => {
           </button>
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
